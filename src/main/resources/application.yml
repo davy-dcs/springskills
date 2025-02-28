@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: springskills
+  output:
+    ansi: enabled
+
+logging:
+  file:
+    name: logs/warn.log
+  level:
+    fr.descamps.springskills: WARN
