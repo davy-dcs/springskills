@@ -1,9 +1,9 @@
 spring:
   application:
     name: springskills
-  output:
-    ansi: enabled
-
+  h2:
+    console:
+      enabled: true
 logging:
   file:
     name: logs/warn.log
