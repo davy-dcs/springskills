@@ -4,8 +4,3 @@ spring:
   h2:
     console:
       enabled: true
-logging:
-  file:
-    name: logs/warn.log
-  level:
-    fr.descamps.springskills: WARN
