@@ -16,6 +16,6 @@ public class Task {
     private Long id;
     private String title;
     private String description;
-    private Date date;
+    private Date dueDate;
     private TaskStatus status;
 }
