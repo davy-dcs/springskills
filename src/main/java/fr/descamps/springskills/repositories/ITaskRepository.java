@@ -7,9 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ITaskRepository extends JpaRepository<Task, Long> {
+    Optional<Task> findByTitle(String title);
     List<Task> findByStatus(TaskStatus status);
     List<Task> findByDueDate(Date date);
 }
