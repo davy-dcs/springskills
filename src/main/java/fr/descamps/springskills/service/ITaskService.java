@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ITaskService {
     List<TaskResponse> getAll();
+    TaskResponse getByTitle(TaskTitleRequest taskTitleRequest);
     TaskResponse create(TaskRequest taskRequest);
     TaskResponse update(TaskTitleRequest taskTitleRequest, TaskRequest taskRequest);
     void delete(TaskTitleRequest taskTitleRequest);

@@ -1,5 +1,6 @@
 package fr.descamps.springskills.service.impl;
 
+import fr.descamps.springskills.component.TaskValidator;
 import fr.descamps.springskills.domain.Task;
 import fr.descamps.springskills.dto.mapper.ITaskMapper;
 import fr.descamps.springskills.dto.request.task.TaskRequest;
@@ -18,6 +19,7 @@ import java.util.List;
 public class TaskServiceImpl implements ITaskService {
     private final ITaskRepository taskRepository;
     private final ITaskMapper taskMapper;
+    private final TaskValidator taskValidator;
 
     @Override
     public List<TaskResponse> getAll() {
@@ -25,7 +27,15 @@ public class TaskServiceImpl implements ITaskService {
     }
 
     @Override
+    public TaskResponse getByTitle(TaskTitleRequest taskTitleRequest) {
+        return taskMapper.taskToTaskResponse(
+                findByTitleOrNotFound(taskTitleRequest)
+        );
+    }
+
+    @Override
     public TaskResponse create(TaskRequest taskRequest) {
+        taskValidator.taskRequestValidate(taskRequest);
         return taskMapper.taskToTaskResponse(
                 taskRepository.save(
                         taskMapper.taskRequestToTask(taskRequest))
@@ -37,7 +47,6 @@ public class TaskServiceImpl implements ITaskService {
         Task task = findByTitleOrNotFound(taskTitleRequest);
         taskMapper.updatePartialTask(taskRequest, task);
         return taskMapper.taskToTaskResponse(taskRepository.save(task));
-
     }
 
     @Override
@@ -48,6 +57,7 @@ public class TaskServiceImpl implements ITaskService {
     }
 
     private Task findByTitleOrNotFound(TaskTitleRequest taskTitleRequest) {
+        taskValidator.taskTitleRequestValidate(taskTitleRequest);
         return taskRepository.findByTitle(taskTitleRequest.title())
                 .orElseThrow(() -> new TaskNotFoundException("Task not found by title : " + taskTitleRequest.title()));
     }
