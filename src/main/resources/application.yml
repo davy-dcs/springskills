@@ -4,3 +4,11 @@ spring:
   h2:
     console:
       enabled: true
+logging:
+  file:
+    name: logs/application.log
+  level:
+    root: ERROR
+    fr.descamps.springskills: DEBUG
+  console:
+    level: DEBUG

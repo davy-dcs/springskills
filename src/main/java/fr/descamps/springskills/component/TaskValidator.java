@@ -22,7 +22,7 @@ public class TaskValidator {
             String message = violations.stream()
                     .map(ConstraintViolation::getMessage)
                     .findFirst().orElse("Title is invalid");
-            throw new TaskBadRequestException(message);
+            throw new TaskBadRequestException("Task bad request : " + message);
         }
     }
 

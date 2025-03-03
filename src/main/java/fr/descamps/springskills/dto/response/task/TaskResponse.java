@@ -1,14 +1,16 @@
 package fr.descamps.springskills.dto.response.task;
 
 import fr.descamps.springskills.domain.TaskStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDate;
 
 public record TaskResponse(
         String title,
         String description,
-        Date dueDate,
+        LocalDate dueDate,
         TaskStatus status
 ) implements Serializable {
 }

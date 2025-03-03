@@ -1,14 +1,16 @@
 package fr.descamps.springskills.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import lombok.Builder;
-import lombok.Data;
+import jakarta.validation.constraints.FutureOrPresent;
+import lombok.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Builder
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Task {
     @Id
@@ -17,8 +19,8 @@ public class Task {
     @Column(unique = true, nullable = false, length = 100)
     private String title;
     private String description;
-    @Future
-    private Date dueDate;
+    @FutureOrPresent
+    private LocalDate dueDate;
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 

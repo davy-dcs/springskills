@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class LoggingAspect {
     @AfterThrowing(pointcut = "execution(* fr.descamps.springskills.service.impl.*.*(..))", throwing = "ex")
     public void logException(Exception ex) {
-        log.error("An error has occurred", ex);
+        log.error("An error has occurred : {}", ex.getMessage());
     }
 
     @AfterReturning(pointcut = "execution(* fr.descamps.springskills.service.impl.*.*(..))", returning = "result")
