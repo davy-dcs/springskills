@@ -2,6 +2,7 @@ package fr.descamps.springskills.service.impl;
 
 import fr.descamps.springskills.component.TaskValidator;
 import fr.descamps.springskills.domain.Task;
+import fr.descamps.springskills.domain.TaskHistory;
 import fr.descamps.springskills.dto.mapper.ITaskMapper;
 import fr.descamps.springskills.dto.request.task.TaskRequest;
 import fr.descamps.springskills.dto.request.task.TaskRequestTaskTitleRequest;
@@ -9,24 +10,28 @@ import fr.descamps.springskills.dto.request.task.TaskTitleRequest;
 import fr.descamps.springskills.dto.response.task.TaskResponse;
 import fr.descamps.springskills.error.exception.TaskNotFoundException;
 import fr.descamps.springskills.error.exception.TaskTitleAlreadyExists;
+import fr.descamps.springskills.event.TaskCreatedEvent;
+import fr.descamps.springskills.repositories.ITaskHistoryRepository;
 import fr.descamps.springskills.repositories.ITaskRepository;
 import fr.descamps.springskills.service.ITaskService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDate;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class TaskServiceImpl implements ITaskService {
     private final ITaskRepository taskRepository;
+    private final ITaskHistoryRepository taskHistoryRepository;
     private final ITaskMapper taskMapper;
     private final TaskValidator taskValidator;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Page<TaskResponse> getAll(Integer page, Integer size) {
@@ -43,6 +48,7 @@ public class TaskServiceImpl implements ITaskService {
     }
 
     @Override
+    @Transactional
     public TaskResponse create(TaskRequest taskRequest) {
         taskValidator.taskRequestValidate(taskRequest);
 
@@ -50,10 +56,21 @@ public class TaskServiceImpl implements ITaskService {
             throw new TaskTitleAlreadyExists("Task already exists with title : " + taskRequest.title());
         }
 
-        return taskMapper.taskToTaskResponse(
-                    taskRepository.save(
-                            taskMapper.taskRequestToTask(taskRequest))
+        Task savedTask = taskRepository.save(taskMapper.taskRequestToTask(taskRequest));
+
+        taskHistoryRepository.save(
+                TaskHistory.builder()
+                    .taskId(savedTask.getId())
+                    .action("CREATE")
+                    .date(LocalDate.now())
+                    .build()
         );
+
+
+        TaskCreatedEvent event = new TaskCreatedEvent(this, savedTask.getId(), savedTask.getTitle());
+        eventPublisher.publishEvent(event);
+
+        return taskMapper.taskToTaskResponse(savedTask);
     }
 
     @Override

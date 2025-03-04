@@ -8,7 +8,5 @@ logging:
   file:
     name: logs/application.log
   level:
-    root: ERROR
+    root: INFO
     fr.descamps.springskills: DEBUG
-  console:
-    level: DEBUG
